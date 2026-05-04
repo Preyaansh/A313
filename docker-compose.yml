@@ -1,0 +1,22 @@
+services:
+  app:
+    build: .
+    container_name: a313-app
+    depends_on:
+      - mongodb
+    environment:
+      MONGODB_URI: mongodb://mongodb:27017/assignment27
+      PORT: 5050
+    ports:
+      - "5050:5050"
+
+  mongodb:
+    image: mongo:7
+    container_name: a313-mongodb
+    ports:
+      - "27018:27017"
+    volumes:
+      - assignment27_mongo_data:/data/db
+
+volumes:
+  assignment27_mongo_data:
