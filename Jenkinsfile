@@ -4,6 +4,7 @@ pipeline {
   environment {
     APP_NAME = 'A313'
     COMPOSE_PROJECT_NAME = 'a313'
+    NODE_IMAGE = 'node:24-alpine'
   }
 
   options {
@@ -24,7 +25,7 @@ pipeline {
     stage('Install') {
       steps {
         script {
-          runCommand('npm ci')
+          runNodeCommand('npm ci')
         }
       }
     }
@@ -32,7 +33,7 @@ pipeline {
     stage('Check') {
       steps {
         script {
-          runCommand('npm run check')
+          runNodeCommand('npm run check')
         }
       }
     }
@@ -40,7 +41,7 @@ pipeline {
     stage('Build') {
       steps {
         script {
-          runCommand('npm run build')
+          runNodeCommand('npm run build')
         }
       }
       post {
@@ -64,7 +65,7 @@ pipeline {
       }
       steps {
         script {
-          runCommand('docker compose up -d --build')
+          runCommand('docker compose up -d --build || docker-compose up -d --build')
         }
       }
     }
@@ -85,5 +86,13 @@ void runCommand(String command) {
     sh command
   } else {
     bat command
+  }
+}
+
+void runNodeCommand(String command) {
+  if (isUnix()) {
+    sh "docker run --rm -v \"${pwd()}:/workspace\" -w /workspace ${env.NODE_IMAGE} sh -lc '${command}'"
+  } else {
+    bat "docker run --rm -v \"%cd%:/workspace\" -w /workspace ${env.NODE_IMAGE} sh -lc \"${command}\""
   }
 }

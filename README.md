@@ -36,6 +36,13 @@ The server seeds sample data automatically when the database is empty.
 
 Create a Pipeline job named `A313`, point it at this repository, and use `Jenkinsfile` from SCM.
 
+If Jenkins runs in Docker, build it with Docker CLI support and mount the host Docker socket:
+
+```bash
+docker build -f Jenkins.Dockerfile -t a313-jenkins .
+docker run -d --name jenkins -p 8080:8080 -p 50000:50000 -v jenkins_home:/var/jenkins_home -v /var/run/docker.sock:/var/run/docker.sock a313-jenkins
+```
+
 The pipeline runs:
 
 - `npm ci`
