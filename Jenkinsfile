@@ -91,7 +91,7 @@ void runCommand(String command) {
 
 void runNodeCommand(String command) {
   if (isUnix()) {
-    sh "docker run --rm -v \"${pwd()}:/workspace\" -w /workspace ${env.NODE_IMAGE} sh -lc '${command}'"
+    sh "docker run --rm --volumes-from \"\$HOSTNAME\" -w \"${pwd()}\" ${env.NODE_IMAGE} sh -lc '${command}'"
   } else {
     bat "docker run --rm -v \"%cd%:/workspace\" -w /workspace ${env.NODE_IMAGE} sh -lc \"${command}\""
   }
